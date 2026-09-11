@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="advanced_list_view_customizer.ListRendererToolbar"
+       t-inherit="web.ListRenderer"
+       t-inherit-mode="extension">
+        <!-- Odoo 19: add toolbar at the top of the list renderer -->
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+            <div class="o_alvc_toolbar d-flex align-items-center flex-wrap gap-1 mb-1">
+                <span class="o_alvc_toolbar_label text-muted small me-1">
+                    <i class="fa fa-table me-1"/>
+                    Spreadsheet tools:
+                </span>
+                <button
+                    class="btn btn-sm btn-outline-secondary"
+                    t-on-click="() => this.onAlvcOpenFreezeDialog()"
+                    title="Freeze the first N columns">
+                    <i class="fa fa-thumb-tack me-1"/>
+                    Freeze
+                    <span
+                        t-if="alvcState.frozenColumnCount"
+                        class="badge text-bg-secondary ms-1">
+                        <t t-esc="alvcState.frozenColumnCount"/>
+                    </span>
+                </button>
+                <button
+                    class="btn btn-sm btn-outline-secondary"
+                    t-on-click="() => this.onAlvcOpenCalculatedColumnDialog()"
+                    title="Add a calculated (formula) column">
+                    <i class="fa fa-calculator me-1"/>
+                    Calculated Column
+                </button>
+                <div
+                    t-if="alvcState.calculatedColumns.length"
+                    class="o_alvc_calc_chip_group d-flex flex-wrap gap-1">
+                    <span
+                        t-foreach="alvcState.calculatedColumns"
+                        t-as="col"
+                        t-key="col.name"
+                        class="badge text-bg-info o_alvc_calc_chip">
+                        <t t-esc="col.label"/>
+                        <i class="fa fa-times ms-1"
+                           t-on-click="() => this.onAlvcRemoveCalculatedColumn(col.name)"/>
+                    </span>
+                </div>
+                <span class="flex-grow-1"/>
+                <span
+                    t-if="alvcState.activeLayoutName"
+                    class="text-muted small me-1"
+                >
+                    Layout:
+                    <strong t-esc="alvcState.activeLayoutName"/>
+                </span>
+
+                <button
+                    class="btn btn-sm btn-outline-primary"
+                    t-on-click="() => this.onAlvcOpenSaveDialog()"
+                    title="Save the current layout">
+                    <i class="fa fa-save me-1"/>
+                    Save Layout
+                </button>
+                <button
+                    class="btn btn-sm btn-outline-primary"
+                    t-on-click="() => this.onAlvcOpenLoadDialog()"
+                    title="Load a saved layout">
+                    <i class="fa fa-folder-open me-1"/>
+                    Load Layout
+                </button>
+            </div>
+        </xpath>
+    </t>
+</templates>

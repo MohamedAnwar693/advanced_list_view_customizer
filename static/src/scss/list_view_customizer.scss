@@ -1,0 +1,90 @@
+// Advanced List View Customizer - styling
+// -----------------------------------------------------------------------
+.o_alvc_toolbar {
+    padding: 4px 2px;
+    border-bottom: 1px solid var(--o-gray-300, #dee2e6);
+
+    .o_alvc_toolbar_label {
+        white-space: nowrap;
+    }
+
+    .o_alvc_calc_chip {
+        cursor: default;
+
+        .fa-times {
+            cursor: pointer;
+            opacity: 0.75;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+// Spreadsheet-style cell selection ------------------------------------------------
+.o_list_table {
+    td.o_alvc_selected_cell {
+        background-color: rgba(113, 75, 214, 0.12) !important;
+        outline: 1px solid rgba(113, 75, 214, 0.55);
+        outline-offset: -1px;
+        position: relative;
+    }
+
+    td.o_alvc_fill_preview {
+        background-color: rgba(113, 75, 214, 0.06) !important;
+        outline: 1px dashed rgba(113, 75, 214, 0.4);
+        outline-offset: -1px;
+    }
+}
+
+.o_alvc_fill_handle {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 8px;
+    height: 8px;
+    background-color: #714ed6;
+    border: 1px solid #fff;
+    border-radius: 1px;
+    cursor: crosshair;
+    z-index: 5;
+}
+
+// Frozen (sticky) columns ------------------------------------------------
+.o_list_table {
+    th.o_alvc_frozen_col,
+    td.o_alvc_frozen_col {
+        background-color: var(--o-view-background-color, #fff);
+    }
+
+    th.o_alvc_frozen_col_last,
+    td.o_alvc_frozen_col_last {
+        box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.25);
+    }
+}
+
+// Calculated columns ------------------------------------------------
+.o_list_table {
+    th.o_alvc_calculated_header {
+        font-style: italic;
+        background-color: rgba(255, 193, 7, 0.12);
+        white-space: nowrap;
+    }
+
+    td.o_alvc_calculated_cell {
+        font-style: italic;
+        background-color: rgba(255, 193, 7, 0.06);
+        text-align: right;
+        color: var(--o-gray-700, #495057);
+    }
+}
+
+// Dialogs ------------------------------------------------
+.o_alvc_dialog {
+    min-width: 320px;
+
+    .o_alvc_layout_table {
+        margin-bottom: 0;
+    }
+}

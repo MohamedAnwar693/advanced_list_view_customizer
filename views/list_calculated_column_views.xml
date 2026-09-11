@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_list_calculated_column_list" model="ir.ui.view">
+        <field name="name">list.calculated.column.list</field>
+        <field name="model">list.calculated.column</field>
+        <field name="arch" type="xml">
+            <list string="Calculated Columns" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="config_id"/>
+                <field name="model_name"/>
+                <field name="name"/>
+                <field name="label"/>
+                <field name="formula"/>
+                <field name="column_type"/>
+                <field name="decimal_precision"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_list_calculated_column" model="ir.actions.act_window">
+        <field name="name">Calculated Columns</field>
+        <field name="res_model">list.calculated.column</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

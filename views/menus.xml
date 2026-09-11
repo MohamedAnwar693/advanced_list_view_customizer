@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_alvc_root"
+              name="List Customizer"
+              parent="base.menu_administration"
+              sequence="60"/>
+
+    <menuitem id="menu_alvc_saved_layouts"
+              name="Saved List Layouts"
+              parent="menu_alvc_root"
+              action="action_list_view_custom_config"
+              sequence="10"/>
+
+    <menuitem id="menu_alvc_calculated_columns"
+              name="Calculated Columns"
+              parent="menu_alvc_root"
+              action="action_list_calculated_column"
+              sequence="20"/>
+</odoo>

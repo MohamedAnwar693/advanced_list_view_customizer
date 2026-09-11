@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_list_view_custom_config_list" model="ir.ui.view">
+        <field name="name">list.view.custom.config.list</field>
+        <field name="model">list.view.custom.config</field>
+        <field name="arch" type="xml">
+            <list string="Saved List Layouts">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="user_id"/>
+                <field name="is_default" widget="boolean_toggle"/>
+                <field name="shared" widget="boolean_toggle"/>
+                <field name="sequence" widget="handle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_list_view_custom_config_form" model="ir.ui.view">
+        <field name="name">list.view.custom.config.form</field>
+        <field name="model">list.view.custom.config</field>
+        <field name="arch" type="xml">
+            <form string="Saved List Layout">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Layout name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="model_name"/>
+                            <field name="view_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="is_default"/>
+                            <field name="shared"/>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group string="Filters">
+                        <field name="domain"/>
+                        <field name="context"/>
+                    </group>
+                    <notebook>
+                        <page string="Calculated Columns">
+                            <field name="calculated_column_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="label"/>
+                                    <field name="formula"/>
+                                    <field name="column_type"/>
+                                    <field name="decimal_precision"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Raw Column Layout (JSON)">
+                            <field name="column_config" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_list_view_custom_config" model="ir.actions.act_window">
+        <field name="name">Saved List Layouts</field>
+        <field name="res_model">list.view.custom.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No saved list layouts yet.
+            </p>
+            <p>
+                Layouts are usually created from within any list view, using the
+                spreadsheet toolbar's "Save Layout" button. This screen is mainly
+                useful for administrators to review or clean up saved layouts.
+            </p>
+        </field>
+    </record>
+</odoo>

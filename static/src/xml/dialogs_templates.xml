@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="advanced_list_view_customizer.SaveViewDialog">
+        <Dialog title="'Save List Layout'" size="'md'">
+            <div class="o_alvc_dialog">
+                <div t-if="state.error" class="alert alert-danger py-1 px-2 mb-2" role="alert">
+                    <t t-esc="state.error"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Layout name</label>
+                    <input type="text" class="form-control" t-model="state.name"
+                           placeholder="e.g. My Sales Overview" autofocus="autofocus"/>
+                </div>
+                <div class="form-check mb-1">
+                    <input type="checkbox" class="form-check-input" t-model="state.isDefault" id="alvc_is_default"/>
+                    <label class="form-check-label" for="alvc_is_default">
+                        Use as my default layout for this list
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" t-model="state.shared" id="alvc_shared"/>
+                    <label class="form-check-label" for="alvc_shared">
+                        Share this layout with all users
+                    </label>
+                </div>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onConfirmClick">Save</button>
+                <button class="btn btn-secondary" t-on-click="onCancelClick">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="advanced_list_view_customizer.LoadViewDialog">
+        <Dialog title="'Load a Saved Layout'" size="'md'">
+            <div class="o_alvc_dialog">
+                <div t-if="!state.layouts.length" class="text-muted">
+                    No saved layouts for this list yet.
+                </div>
+                <table t-else="" class="table table-sm o_alvc_layout_table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th/>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.layouts" t-as="layout" t-key="layout.id">
+                            <td>
+                                <t t-esc="layout.name"/>
+                                <span t-if="layout.is_default" class="badge text-bg-primary ms-1">Default</span>
+                                <span t-if="layout.shared" class="badge text-bg-secondary ms-1">Shared</span>
+                            </td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-primary" t-on-click="() => this.onLoadClick(layout)">
+                                    Load
+                                </button>
+                            </td>
+                            <td class="text-end">
+                                <button t-if="layout.is_owner" class="btn btn-sm btn-outline-danger"
+                                        t-on-click="() => this.onDeleteClick(layout)">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="onCancelClick">Close</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="advanced_list_view_customizer.CalculatedColumnDialog">
+        <Dialog title="'Add Calculated Column'" size="md">
+            <div class="o_alvc_dialog">
+                <div t-if="state.error" class="alert alert-danger py-1 px-2 mb-2" role="alert">
+                    <t t-esc="state.error"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Technical name</label>
+                    <input type="text" class="form-control" t-model="state.name" placeholder="e.g. margin_pct"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Column label</label>
+                    <input type="text" class="form-control" t-model="state.label" placeholder="e.g. Margin %"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Formula</label>
+                    <input type="text" class="form-control" t-model="state.formula"
+                           placeholder="e.g. (price_unit * product_uom_qty) - discount"/>
+                    <small t-if="fieldHint" class="form-text text-muted">
+                        Available fields on this list: <t t-esc="fieldHint"/>
+                    </small>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" t-model="state.columnType">
+                            <option value="float">Decimal</option>
+                            <option value="integer">Integer</option>
+                            <option value="monetary">Monetary</option>
+                            <option value="percentage">Percentage</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Decimal precision</label>
+                        <input type="number" class="form-control" min="0" max="6" t-model="state.decimalPrecision"/>
+                    </div>
+                </div>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onConfirmClick">Add Column</button>
+                <button class="btn btn-secondary" t-on-click="onCancelClick">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="advanced_list_view_customizer.FreezeColumnsDialog">
+        <Dialog title="'Freeze Columns'" size="'sm'">
+            <div class="o_alvc_dialog">
+                <label class="form-label">
+                    Freeze the first N columns (they'll stay visible while scrolling horizontally)
+                </label>
+                <input type="number" class="form-control" min="0" t-att-max="props.maxColumns"
+                       t-model="state.frozenCount"/>
+                <small class="form-text text-muted">Use 0 to unfreeze all columns.</small>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onConfirmClick">Apply</button>
+                <button class="btn btn-secondary" t-on-click="onCancelClick">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>
