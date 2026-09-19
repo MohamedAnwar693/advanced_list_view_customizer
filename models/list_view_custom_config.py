@@ -9,13 +9,6 @@ _logger = logging.getLogger(__name__)
 
 
 class ListViewCustomConfig(models.Model):
-    """A saved, spreadsheet-style layout for a given model's list view.
-
-    Stores things a normal ir.ui.view cannot: column order/width, which
-    columns are frozen, and the calculated (virtual) columns the user
-    defined, all scoped per user (optionally shared).
-    """
-
     _name = 'list.view.custom.config'
     _description = 'Saved Custom List View Layout'
     _order = 'sequence, id'
@@ -35,13 +28,13 @@ class ListViewCustomConfig(models.Model):
     active = fields.Boolean(default=True)
     is_default = fields.Boolean(
         string='Default Layout',
-        help='Automatically apply this layout when the owner opens this model\'s list view.',
+        help="Automatically apply this layout when the owner opens this model's list view.",
     )
     domain = fields.Char(default='[]')
     context = fields.Char(default='{}')
     column_config = fields.Text(
         string='Column Layout (JSON)',
-        help='JSON blob describing column order, pixel widths and frozen columns.',
+        help='JSON blob describing column order, pixel widths, optional fields and frozen columns.',
     )
     calculated_column_ids = fields.One2many(
         'list.calculated.column', 'config_id', string='Calculated Columns', copy=True,
@@ -70,21 +63,35 @@ class ListViewCustomConfig(models.Model):
                 except (TypeError, ValueError):
                     raise ValidationError('Column Layout must be valid JSON.')
 
-    @api.constrains('is_default', 'user_id', 'model_name')
-    def _check_single_default(self):
+    @api.constrains('model_name')
+    def _check_model_name(self):
         for rec in self:
-            if rec.is_default:
-                others = self.search([
-                    ('id', '!=', rec.id),
-                    ('user_id', '=', rec.user_id.id),
-                    ('model_name', '=', rec.model_name),
-                    ('is_default', '=', True),
-                ])
+            if rec.model_name and rec.model_name not in self.env:
+                raise ValidationError('Unknown model: %s' % rec.model_name)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records.filtered('is_default')._alvc_unset_other_defaults()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        if any(key in vals for key in ('is_default', 'user_id', 'model_name')):
+            self.filtered('is_default')._alvc_unset_other_defaults()
+        return res
+
+    def _alvc_unset_other_defaults(self):
+        for rec in self:
+            others = self.sudo().search([
+                ('id', '!=', rec.id),
+                ('user_id', '=', rec.user_id.id),
+                ('model_name', '=', rec.model_name),
+                ('is_default', '=', True),
+            ])
+            if others:
                 others.write({'is_default': False})
 
-    # ------------------------------------------------------------------------------
-    # Called from JS to list the layouts available to the current user for a model.
-    # ------------------------------------------------------------------------------
     @api.model
     def get_views_for_model(self, model_name):
         domain = [
@@ -123,14 +130,9 @@ class ListViewCustomConfig(models.Model):
             'calculated_columns': config.get_calculated_columns(),
         }
 
-    # -----------------------------------------------------------------
-    # Create or update a saved layout coming from the JS client.
-    # `vals` may contain: id (optional, to update), name, model_name,
-    # column_config (JSON string), domain, context, is_default,
-    # shared, calculated_columns (list of dicts).
-    # ------------------------------------------------------------------
     @api.model
     def save_view_config(self, vals):
+        vals = dict(vals or {})
         calculated_columns = vals.pop('calculated_columns', None)
 
         config = self.browse(vals.get('id')) if vals.get('id') else self.browse()
@@ -143,6 +145,8 @@ class ListViewCustomConfig(models.Model):
             'is_default': bool(vals.get('is_default', False)),
             'shared': bool(vals.get('shared', False)),
         }
+        if not write_vals.get('name') or not write_vals.get('model_name'):
+            raise ValidationError('Layout name and model are required.')
 
         if config and config.exists():
             if config.user_id.id != self.env.uid and not self.env.user.has_group('base.group_system'):
@@ -154,7 +158,7 @@ class ListViewCustomConfig(models.Model):
 
         if calculated_columns is not None:
             config.calculated_column_ids.unlink()
-            for col in calculated_columns:
+            for sequence, col in enumerate(calculated_columns, start=10):
                 self.env['list.calculated.column'].create({
                     'config_id': config.id,
                     'name': col.get('name'),
@@ -162,7 +166,7 @@ class ListViewCustomConfig(models.Model):
                     'formula': col.get('formula'),
                     'column_type': col.get('column_type', 'float'),
                     'decimal_precision': col.get('decimal_precision', 2),
-                    'sequence': col.get('sequence', 10),
+                    'sequence': col.get('sequence', sequence),
                 })
 
         return {'id': config.id, 'name': config.name}
