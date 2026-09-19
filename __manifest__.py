@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Advanced List View Customizer',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Productivity/Tools',
     'summary': 'Spreadsheet-like list views: multi-cell editing, drag-to-fill, '
                'column freezing, calculated columns and per-user saved views.',
