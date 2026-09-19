@@ -3,8 +3,7 @@
     <t t-name="advanced_list_view_customizer.ListRendererToolbar"
        t-inherit="web.ListRenderer"
        t-inherit-mode="extension">
-        <!-- Odoo 19: add toolbar at the top of the list renderer -->
-        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+        <xpath expr="//table[hasclass('o_list_table')]" position="before">
             <div class="o_alvc_toolbar d-flex align-items-center flex-wrap gap-1 mb-1">
                 <span class="o_alvc_toolbar_label text-muted small me-1">
                     <i class="fa fa-table me-1"/>
